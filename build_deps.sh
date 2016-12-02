@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 bak=~+
 
 errorofbuid()
@@ -119,7 +119,7 @@ then
 	source "$SCRDIR/_paths.sh"
 else
 	echo ""
-	echo "_paths.sh is not exist! Run \"generate_paths.sh\" first!"
+	echo "_paths.sh does not exist! Run \"generate_paths.sh\" first!"
 	errorofbuid
 fi
 
@@ -129,7 +129,7 @@ LD_LIBRARY_PATH=$QT_LIB_PATH:$LD_LIBRARY_PATH
 #=======================================================================
 
 if $flag_nolibs ; then
-	echo "Building of tag.gz libraries skiped"
+	echo "Skipped building tar.gz libraries"
 	echo "Building SDL2_mixer_ext, LuaBIND and FreeImage..."
 else
 	buildLibs
@@ -157,13 +157,13 @@ checkState
 cd ..
 #=======================================================================
 echo ""
-echo "Autotools-based built libraries"
+echo "Built Autotools-based libraries in:"
 show_time $TIME_PASSED_LIBS
-echo "QMake-based built libraries"
+echo "Built QMake-based libraries in:"
 show_time $TIME_PASSED
-echo "Total time of build"
+echo "Total build time:"
 show_time $(($TIME_PASSED+$TIME_PASSED_LIBS))
-printf "\n\n=========DEPENDENCIES HAS BEEN BUILT!!===========\n\n"
+printf "\n\n=========DEPENDENCIES SUCCESSFULLY BUILT!!===========\n\n"
 cd $bak
 if $flag_pause_on_end ; then
     read -n 1;

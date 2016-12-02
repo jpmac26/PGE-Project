@@ -1,10 +1,13 @@
-#/bin/bash
+#!/bin/bash
 bak=~+
 
 if [[ "$OSTYPE" == "msys"* ]]; then
    ./build.bat
    exit 0
 fi
+
+#=============Set the build date to the last commit====================+
+./set_build_date.sh
 
 #flags
 flag_pause_on_end=true
@@ -46,7 +49,7 @@ then
 	source "$SCRDIR/_paths.sh"
 else
 	echo ""
-	echo "_paths.sh is not exist! Run \"generate_paths.sh\" first!"
+	echo "_paths.sh does not exist! Run \"generate_paths.sh\" first!"
 	errorofbuild
 fi
 
@@ -85,7 +88,7 @@ checkState
 #=======================================================================
 echo ""
 show_time $TIME_PASSED
-printf "\n\n=========BUILT!!===========\n\n"
+printf "\n\n=========BUILT!===========\n\n"
 cd $bak
 if $flag_pause_on_end ; then 
     read -n 1;

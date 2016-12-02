@@ -21,7 +21,7 @@
 
 //Version of whole project
 #define _VERSION "0.4.0.0"
-#define _RELEASE "" //Developing state (for release this field must be empty)
+#define _RELEASE "DEBUG" //Developing state (for release this field must be empty)
 
 #define _VP1 0
 #define _VP2 4
@@ -30,7 +30,7 @@
 
 #define _COPYRIGHT "2014-2016 by Wohlstand"
 
-#define _COMPANY "Wohlhabend Networks"
+#define _COMPANY "WohlSoft Networks"
 
 #define _PGE_URL "wohlsoft.ru"
 
@@ -48,10 +48,5 @@
 	#define OPERATION_SYSTEM "GNU/Linux"
 #else
 	#define OPERATION_SYSTEM "Other"
-#endif
-
-#define _DATE_OF_BUILD __DATE__ " " __TIME__
-
-
 #endif
 

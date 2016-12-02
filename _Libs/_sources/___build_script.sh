@@ -32,7 +32,7 @@ fi
 errorofbuild()
 {
 	printf "\n\n=========ERROR!!===========\n\n"
-    printf "Build failed in the $CURRENT_TARBALL component\n\n"
+    printf "Failed to build the $CURRENT_TARBALL component\n\n"
 	exit 1
 }
 #=======================================================================

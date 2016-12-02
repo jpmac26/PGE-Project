@@ -45,5 +45,5 @@ echo "Everything already clean!"
 fi
 
 cd $bak
-if [[ "$1" != "nopause" ]]; then read -n 1; fi
+if [[ "$1" == "pause" ]]; then read -n 1; fi
 

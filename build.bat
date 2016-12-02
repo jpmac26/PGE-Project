@@ -1,5 +1,8 @@
 @echo off
 
+rem Set build date from timestamp of last commit
+.\set_build_date.bat
+
 SET NoPause=0
 SET BuildArgs=
 SET MAKE_EXTRA_ARGS=-r -j 4

@@ -60,7 +60,7 @@ aboutDialog::aboutDialog(QWidget *parent) :
                         .arg(_FILE_RELEASE)
                         .arg(QString("Revision: %1, Build date: <u>%2</u>")
                              .arg(_BUILD_VER)
-                             .arg(_DATE_OF_BUILD))
+                             .arg(_CURRENT_BUILD_DATE))
                         );
 
     QFile mFile(":/credits.html");

@@ -60,85 +60,38 @@ void UpdateChecker::on_close_clicked()
     this->close();
 }
 
-static int Month2Code(QString &mon)
+static int Timezone2Offset(QString tz)
 {
-    if(mon=="Jan")
-        return 1;
-    else if(mon=="Feb")
-        return 2;
-    else if(mon=="Mar")
-        return 3;
-    else if(mon=="Apr")
-        return 4;
-    else if(mon=="May")
-        return 5;
-    else if(mon=="Jun")
-        return 6;
-    else if(mon=="Jul")
-        return 7;
-    else if(mon=="Aug")
-        return 8;
-    else if(mon=="Sep")
-        return 9;
-    else if(mon=="Oct")
-        return 10;
-    else if(mon=="Nov")
-        return 11;
-    else if(mon=="Dec")
-        return 12;
+    int seconds;
+    if (tz[0] == '+')
+    {
+        seconds = (tz.split('+').last().toInt() / 100)  * 3600;
+    }
     else
-        return 1;
+    {
+        seconds = (tz.toInt() / 100) * 3600;
+    }
+
+    return seconds;
 }
 
 static unsigned int BuildDateToTimestamp(const char *buildTime)
 {
     QString src(buildTime);
-    unsigned int result=0;
-    QDate date;
-    QTime time;
-    int years = 0;
-    int months = 0;
-    int days = 0;
-    int hours = 0;
-    int minutes = 0;
-    int seconds = 0;
+    QString timeZone = src.split(' ').last();
+    src.truncate(src.length() - 6);
+    QDateTime dateTime = QDateTime::fromString(src, "ddd MMM d HH:mm:ss yyyy");
+    dateTime.setTimeSpec(Qt::UTC);
+    dateTime.setUtcOffset(Timezone2Offset(timeZone));
+    unsigned int result = 0;
 
-    src = src.simplified();
-    src.replace(' ', '-');
-    src.replace('.', '-');
-    src.replace(':', '-');
-    QStringList datetime = src.split('-', QString::SkipEmptyParts);
-
-    for(int i=0; i<datetime.size(); i++)
-    {
-        QString &elem = datetime[i];
-        switch(i)
-        {
-        case 0:
-            months = Month2Code(elem); break;
-        case 1:
-            days = elem.toInt(); break;
-        case 2:
-            years = elem.toLong(); break;
-        case 3:
-            hours = elem.toLong(); break;
-        case 4:
-            minutes = elem.toLong(); break;
-        case 5:
-            seconds = elem.toLong(); break;
-        }
-    }
-
-    date.setDate(years, months, days);
-    time.setHMS(hours, minutes, seconds);
-
-    result = QDateTime(date, time).toTime_t();
+    result = dateTime.toLocalTime().toTime_t();
     return result;
 }
 
-static unsigned int DatetimeToTimestamp(QString src)
+/*static unsigned int DatetimeToTimestamp(QString src)
 {
-    unsigned int result=0;
+    unsigned int result = 0;
     QDate date;
     QTime time;
     int years = 0;
@@ -154,7 +107,7 @@ static unsigned int DatetimeToTimestamp(QString src)
     src.replace(':', '-');
     QStringList datetime = src.split('-', QString::SkipEmptyParts);
 
-    for(int i=0; i<datetime.size(); i++)
+    for(int i = 0; i < datetime.size(); i++)
     {
         QString &elem = datetime[i];
         switch(i)
@@ -176,9 +129,9 @@ static unsigned int DatetimeToTimestamp(QString src)
     date.setDate(years, months, days);
     time.setHMS(hours, minutes, seconds);
 
-    result = QDateTime(date, time).toTime_t();
+    result = QDateTime(date, time, Qt::UTC).toLocalTime().toTime_t();
     return result;
-}
+} */
 
 //static int DatetimeToTimestamp(const char *buildTime)
 //{
@@ -314,33 +267,33 @@ void UpdateChecker::httpFinished()
         latest = latest.trimmed();
         latest.remove('\n');
 
-        bool isLatest = ( DatetimeToTimestamp(latest) <= BuildDateToTimestamp(_DATE_OF_BUILD) );
+        bool isLatest = (BuildDateToTimestamp(latest.toStdString().c_str()) <= BuildDateToTimestamp(_CURRENT_BUILD_DATE));
 
         switch(which_version)
         {
         case V_STABLE:
             //qDebug() << QString("%1").arg(_LATEST_STABLE) << "vs" << latest;
 
-            qDebug() << QString("%1").arg(_DATE_OF_BUILD) << "vs" << latest;
+            qDebug() << QString("%1").arg(_CURRENT_BUILD_DATE) << "vs" << latest;
             //qDebug() << VersionCmp::compare(QString("%1").arg(_LATEST_STABLE), latest) << " win!" <<
             qDebug() << ( isLatest ? "fresh" : "old" );
 
             //( ( QString("%1").arg(_LATEST_STABLE) == VersionCmp::compare(QString("%1").arg(_LATEST_STABLE), latest) ) ? "fresh" : "old" );
             //if( QString("%1").arg(_LATEST_STABLE) == VersionCmp::compare(QString("%1").arg(_LATEST_STABLE), latest) )
 
-            if( isLatest )
-                ui->updatesStable->setText( QString( "<span style=\"color:#005500;\">%1</span>" )
-                                            .arg( tr("You have a latest version!" ) ) );
+            if(isLatest)
+                ui->updatesStable->setText(QString("<span style=\"color:#005500;\">%1</span>")
+                                            .arg(tr("You have the latest version!")));
             else
-                ui->updatesStable->setText( QString( "<span style=\"color:#0000FF;\"><a href=\"%1\">%2</a></span>" )
-                                            .arg(STABLE_LINK).arg( tr("Available new update!") ) );
+                ui->updatesStable->setText(QString("<span style=\"color:#0000FF;\"><a href=\"%1\">%2</a></span>")
+                                            .arg(STABLE_LINK).arg(tr("Available new update!")));
             break;
         case V_DEVEL:
             if( isLatest )
-                ui->updatesAlpha->setText( QString("<span style=\"color:#005500;\">%1</span>").arg( tr("You have a latest version!") ) );
+                ui->updatesAlpha->setText(QString("<span style=\"color:#005500;\">%1</span>").arg( tr("You have a latest version!")));
             else
-                ui->updatesAlpha->setText( QString("<span style=\"color:#0000FF;\"><a href=\"%1\">%3 %2</a></span>" )
-                                           .arg(DEVEL_LINK).arg(latest).arg( tr("Latest update is") ) );
+                ui->updatesAlpha->setText(QString("<span style=\"color:#0000FF;\"><a href=\"%1\">%3 %2</a></span>")
+                                           .arg(DEVEL_LINK).arg(latest).arg(tr("Latest update is")));
             break;
         }
     }
