@@ -43,7 +43,7 @@ _Libs/_builds/win32/lib/libSDL2MixerVB.a
 _Libs/_builds/win32/lib/libSDL_Mixer_Xstatic.a
 _Libs/_builds/win32/share
 
-./pge_version.h
+pge_version.h
 
 _Libs/.qmake.stash
 
